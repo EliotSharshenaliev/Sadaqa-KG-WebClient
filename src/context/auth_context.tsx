@@ -1,7 +1,7 @@
 import React, {ReactNode, useContext} from "react";
 import {User} from "../shared/types/user";
-import {getUser} from "../service/auth";
-import {Spinner} from "react-bootstrap";
+import AuthService from "../service/auth";
+import LoadingPage from "../components/spinner/loading-page";
 
 export interface AuthContextInterface {
     user: User | null,
@@ -25,25 +25,20 @@ export const AuthProvider = ({children}: AuthProvider) => {
 
     // Get user
     React.useEffect(() => {
-        try {
-            setLoading(true)
-            const token: string | null = localStorage.getItem('jwtToken');
-
-            if (token != null) {
-                const jwtToken = JSON.parse(token)
-                getUser(jwtToken)
-                    .then(user => {
-                        setUser(user)
-                        setIsAuthenticated(true)
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        setIsAuthenticated(false)
-                    })
+        const fetchUserData = async () => {
+            try {
+                setLoading(true)
+                const user = await AuthService.getCurrentUser();
+                setUser(user);
+                setIsAuthenticated(true)
+            } catch (error) {
+                setIsAuthenticated(false)
+            }finally {
+                setLoading(false)
             }
-        }finally {
-            setLoading(false)
-        }
+        };
+
+        fetchUserData()
     }, []);
 
     const contextValues: AuthContextInterface = {
@@ -58,7 +53,7 @@ export const AuthProvider = ({children}: AuthProvider) => {
             </Context.Provider>
         )
     } else {
-        return <Spinner/>
+        return <LoadingPage/>
     }
 }
 
