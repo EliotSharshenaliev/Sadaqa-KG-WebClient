@@ -5,12 +5,12 @@ import {Container, Row} from "react-bootstrap";
 import Profile from "../components/profile/profile";
 import Odometer from "../components/odometer/odometer";
 import UsersTable from "../components/table/users-table";
-import ProfileModal from "../components/profile_modal/modal";
-import {useParams} from "react-router-dom";
+import ProfileModal from "../components/modals/profile";
 
 const HomePage = () => {
-    const params = useParams()
-    console.log(params)
+    const [profileModalVisible, setProfileModalVisible] = React.useState(false)
+    const toggleProfileModalVisible = () => setProfileModalVisible(!profileModalVisible)
+
     return (
         <>
             <Vector2/>
@@ -18,7 +18,7 @@ const HomePage = () => {
             <Container className={"text-center"}>
                 <Row className={"d-flex justify-content-center align-items-center h-100 mt-5"}>
                     <div id="profileContainer" className="col col-md-9 col-lg-7 col-xl-5">
-                        <Profile/>
+                        <Profile onToggle={toggleProfileModalVisible}/>
                     </div>
                 </Row>
 
@@ -34,7 +34,10 @@ const HomePage = () => {
                     </div>
                 </Row>
             </Container>
-            <ProfileModal/>
+            <ProfileModal
+                show={profileModalVisible}
+                onToggle={toggleProfileModalVisible}
+            />
         </>
     );
 };
