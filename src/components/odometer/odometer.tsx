@@ -1,18 +1,20 @@
 import React from 'react';
+import 'odometer/themes/odometer-theme-minimal.css';
+
+const ReactOdometer = React.lazy(() => import("react-odometerjs"))
+
 const Odometer = () => {
     const [score, setScore] = React.useState(132535)
 
 
     React.useEffect(() => {
-
-        //Implementing the setInterval method
         const interval = setInterval(() => {
             setScore(score + 1);
         }, 1000);
 
-        //Clearing the interval
         return () => clearInterval(interval);
     }, [score]);
+
     return (
         <div
             className="card border-0 d-flex justify-content-center align-items-md-center bg-transparent">
@@ -24,10 +26,11 @@ const Odometer = () => {
                     d="M403.288 104.866H18.3743L39.2487 57.9123L18.3743 10.97H403.288L387.43 57.9123L403.288 104.866Z"
                     stroke="white"></path>
             </svg>
-            <div
-                className={"odometer counter-input text-white z-1"}>
-                {score}
-            </div>
+            <ReactOdometer
+                className={"counter-input text-white z-1"}
+                value={score} format="(ddd),dd"
+            />
+
         </div>
     );
 };
