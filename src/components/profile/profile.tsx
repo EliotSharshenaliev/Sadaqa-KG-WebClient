@@ -1,20 +1,24 @@
 import React from 'react';
 import Button from "react-bootstrap/Button";
-import {useSettings} from "../../context/profile_modal";
-import {Card, Col, Row} from "react-bootstrap";
+import {Card, Row} from "react-bootstrap";
+import {DeleteConfirmationModal} from "../modals/delete-account";
+import {useAuth} from "../../context/auth_context";
+import {getRegisteredDays} from "../../utils/calculate_days";
 
-const Profile = () => {
-    const {handleProfileModal} = useSettings()
+const Profile = ({onToggle}: {onToggle: () => void}) => {
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+    const {user} = useAuth()
+
     return (
-        <Card style={{border:"none"}}>
+        <Card style={{border: "none"}}>
             <Card.Body>
                 <div className="mt-3 mb-4">
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
+                    <img src={user?.picture_url}
                          className="rounded-circle img-fluid" style={{width: "100px"}} alt={"img"}/>
                 </div>
-                <Card.Title>Marat Sharshenaliev</Card.Title>
+                <Card.Title>{user?.firstname + " " + user?.lastname}</Card.Title>
                 <Card.Text>
-                    @shrshn_alyev
+                    @{user?.username}
                 </Card.Text>
 
                 <Row
@@ -32,13 +36,13 @@ const Profile = () => {
                         <Button
                             type={"button"}
                             variant="success"
-                            onClick={handleProfileModal}>
-                            Настройка подписки
+                            onClick={onToggle}>
+                            Настройки
                         </Button>
                         <Button
                             type={"button"}
                             variant="outline-danger"
-                            onClick={handleProfileModal}>
+                            onClick={() => setShowDeleteConfirmation(true)}>
                             Удалить аккаунт
                         </Button>
                     </Row>
@@ -47,7 +51,7 @@ const Profile = () => {
                 <div
                     className="d-xxl-flex d-xl-flex d-lg-flex d-md-flex d-sm-flex  justify-content-between text-center mt-5 mb-2">
                     <div className="mb-2 mb-md-0">
-                        <p className="mb-2 h5 ">13 day</p>
+                        <p className="mb-2 h5 ">{getRegisteredDays(user?.created_at)}</p>
                         <p className="text-muted mb-0 text-center ">В платформе</p>
                     </div>
                     <div className="px-3 mb-2 mb-md-0">
@@ -60,6 +64,10 @@ const Profile = () => {
                     </div>
                 </div>
             </Card.Body>
+            <DeleteConfirmationModal
+                show={showDeleteConfirmation}
+                onClose={() => setShowDeleteConfirmation(false)}
+            />
         </Card>
     );
 };
