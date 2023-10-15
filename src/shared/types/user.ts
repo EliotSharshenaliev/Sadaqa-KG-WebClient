@@ -6,5 +6,6 @@ export interface User {
     phone: string,
     email: string,
     created_at: string,
-    stripe_user: boolean
+    stripe_user: boolean,
+    picture_url: string,
 }
