@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Routes} from "react-router-dom"
+import {Navigate, Route, Routes} from "react-router-dom"
 import {useAuth} from "../context/auth_context";
 import { createRoot } from "react-dom/client";
 
@@ -8,32 +8,23 @@ const HomePage = React.lazy(() => import("../pages/HomePage"))
 const LoginPage = React.lazy(() => import("../pages/Login"))
 
 
-const Router = () => {
+const ProtectedRouter = () => {
     const {isAuthenticated, user} = useAuth();
-
-    if (isAuthenticated && user?.id ) {
+    if (isAuthenticated) {
         return (
             <Routes>
-                <Route path="/:username" element={<HomePage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path={"*"} element={<Navigate to={"/"}/>}/>
             </Routes>
         )
     }
-
     return (
         <Routes>
-            {
-                isAuthenticated && (
-                    <>
-                        <Route path="/:username" element={<HomePage />} />
-                        <Route path="/login" element={<LoginPage/>}/>
-                        <Route path="/register" element={<LoginPage/>}/>
-                    </>
-                )
-
-
-            }
+            <Route path="/" element={<LoginPage/>}/>
+            <Route path="/register" element={<LoginPage/>}/>
+            <Route path={"*"} element={<Navigate to={"/"}/>}/>
         </Routes>
     )
 }
 
-export default Router
+export default ProtectedRouter
